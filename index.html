@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ISO 27001, done for real: a beginner's casebook | CyberShiftWithFunke</title>
+<meta name="description" content="A practical ISO 27001:2022 guide. Follow one SaaS company from day one to audit, and trace one risk all the way to the auditor's question.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF2F6; --paper:#FFFFFF; --ink:#1B2433; --muted:#566174; --line:#D3DAE3;
+  --gold:#B8801C; --gold-soft:#F6EBD3; --teal:#2B6A6E; --teal-soft:#DDEDEE; --red:#A5452F; --red-soft:#F5E1DB;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#10161F; --paper:#18212D; --ink:#E4E9F0; --muted:#9AA6B6; --line:#2B3747;
+    --gold:#E2B24E; --gold-soft:#342A15; --teal:#7CBDC0; --teal-soft:#16302F; --red:#E48E77; --red-soft:#3A221C;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10161F; --paper:#18212D; --ink:#E4E9F0; --muted:#9AA6B6; --line:#2B3747;
+  --gold:#E2B24E; --gold-soft:#342A15; --teal:#7CBDC0; --teal-soft:#16302F; --red:#E48E77; --red-soft:#3A221C;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:1.0625rem;line-height:1.6}
+h1,h2,h3,h4{font-family:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.15;margin:0}
+p{margin:0 0 .9em}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:4px}
+.wrap{max-width:46rem;margin:0 auto;padding:0 1.25rem}
+
+/* Hero */
+header.hero{padding:3.5rem 0 2.5rem}
+.byline{color:var(--muted);font-size:.95rem;margin-bottom:1.5rem}
+.hero h1{font-size:clamp(2.3rem,7vw,3.9rem);font-weight:800;letter-spacing:-.02em;max-width:14ch}
+.hero .lede{font-size:1.2rem;margin-top:1.25rem;max-width:36rem}
+.thread-demo{margin-top:2rem;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:1.25rem 1.25rem 1rem;overflow-x:auto}
+.thread-demo p.cap{font-size:.92rem;color:var(--muted);margin:0 0 .75rem}
+.chain{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.chain li{background:var(--gold-soft);color:var(--ink);border-radius:999px;padding:.35rem .8rem;font-size:.9rem;font-weight:700;white-space:nowrap}
+.chain li.arrow{background:none;padding:0 .1rem;color:var(--gold);font-weight:700}
+
+/* Why different */
+section{padding:2rem 0}
+.section-title{font-size:clamp(1.6rem,4vw,2.1rem);font-weight:700;margin-bottom:1rem}
+.diff{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));margin-top:1rem}
+.diff div{border-left:4px solid var(--teal);padding:.25rem 0 .25rem 1rem}
+.diff h3{font-size:1.1rem;margin-bottom:.3rem}
+.diff p{color:var(--muted);margin:0;font-size:.98rem}
+
+/* Company file */
+.casefile{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:1.5rem}
+.casefile h2{font-size:1.6rem;margin-bottom:.75rem}
+.facts{display:grid;grid-template-columns:max-content 1fr;gap:.35rem 1.25rem;margin:1rem 0 0;font-size:.98rem}
+.facts dt{font-weight:700}
+.facts dd{margin:0;color:var(--muted)}
+
+/* Steps with thread */
+.steps{position:relative;list-style:none;margin:0;padding:0}
+.steps::before{content:"";position:absolute;left:1.15rem;top:1rem;bottom:1rem;width:4px;border-radius:4px;background:var(--gold)}
+.step{position:relative;padding:0 0 2.75rem 3.5rem}
+.step .num{position:absolute;left:0;top:0;width:2.35rem;height:2.35rem;border-radius:50%;background:var(--gold);color:var(--paper);display:grid;place-items:center;font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.05rem;border:4px solid var(--bg)}
+.step h3{font-size:1.45rem;font-weight:700;padding-top:.2rem}
+.clause{color:var(--muted);font-size:.9rem;margin:.25rem 0 1rem}
+.plain{background:var(--teal-soft);border-radius:10px;padding:.7rem .9rem;margin:.75rem 0 .4rem;font-size:1.05rem}
+.basics dl{margin:1rem 0 0}
+.basics dt{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.1rem;margin-top:1.1rem}
+.basics dd{margin:.2rem 0 0}
+.analogy{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:1.25rem;margin-top:1.5rem}
+.analogy ol{padding-left:1.2rem;margin:.5rem 0 0}
+.analogy li{margin-bottom:.35rem}
+.glossary{display:grid;grid-template-columns:max-content 1fr;gap:.5rem 1.25rem;font-size:.98rem}
+.glossary dt{font-weight:700}
+.glossary dd{margin:0;color:var(--muted)}
+@media (max-width:30rem){.glossary{grid-template-columns:1fr}.glossary dt{margin-top:.6rem}}
+.step h4{font-size:1.02rem;margin:1.1rem 0 .4rem}
+.step ul,.step ol{margin:0 0 .9em;padding-left:1.2rem}
+.step li{margin-bottom:.3rem}
+.box{border-radius:12px;padding:1rem 1.1rem;margin:1rem 0;font-size:.98rem}
+.box > strong:first-child{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:1rem;margin-bottom:.3rem}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box.example{background:var(--paper);border:1px solid var(--line)}
+.box.thread{background:var(--gold-soft);border-left:5px solid var(--gold)}
+.box.mistake{background:var(--red-soft);border-left:5px solid var(--red)}
+.box.auditor{background:var(--teal-soft);border-left:5px solid var(--teal)}
+.tablewrap{overflow-x:auto;margin:.75rem 0 1rem;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:34rem}
+th,td{text-align:left;vertical-align:top;padding:.55rem .7rem;border-bottom:1px solid var(--line)}
+th{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+.quote{font-style:italic;border-left:3px solid var(--line);padding-left:.9rem;color:var(--ink)}
+.done{display:flex;align-items:center;gap:.6rem;margin-top:1rem;font-weight:700;cursor:pointer;width:max-content;max-width:100%}
+.done input{width:1.25rem;height:1.25rem;accent-color:var(--teal);cursor:pointer}
+.step.is-done .num{background:var(--teal)}
+
+.progress{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:.6rem 0}
+.progress .wrap{display:flex;align-items:center;gap:1rem}
+.bar{flex:1;height:8px;border-radius:8px;background:var(--line);overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--teal);transition:width .3s ease}
+.progress small{font-weight:700;white-space:nowrap}
+.reset{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:.25rem .6rem;font:inherit;font-size:.85rem;cursor:pointer}
+
+/* Plan */
+.plan{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}
+.plan div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:1rem}
+.plan h3{font-size:1.1rem;margin-bottom:.4rem}
+.plan ul{margin:0;padding-left:1.1rem;font-size:.95rem}
+.checklist{columns:2 16rem;padding-left:1.1rem;font-size:.97rem}
+.checklist li{break-inside:avoid;margin-bottom:.35rem}
+
+footer{padding:2.5rem 0 3rem;color:var(--muted);font-size:.93rem;border-top:1px solid var(--line);margin-top:1rem}
+footer strong{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+@media (max-width:30rem){.step{padding-left:3rem}.steps::before{left:1rem}.facts{grid-template-columns:1fr}.facts dt{margin-top:.5rem}}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-label="Your progress through the guide">
+  <div class="wrap">
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="bar"><span></span></div>
+    <small id="count">0 of 10 steps done</small>
+    <button class="reset" id="reset" type="button">Reset</button>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="byline">A CyberShiftWithFunke guide by Funke Omolere, CISM, CRISC</p>
+    <h1>ISO 27001, done for real.</h1>
+    <p class="lede">A step-by-step guide for complete beginners. You'll follow one pretend company as it works towards ISO 27001, and watch one security problem get spotted, fixed and checked from start to finish.</p>
+    <p style="margin-top:.75rem">New to all of this? Start with <a href="#basics">the basics</a>. Stuck on a word? Check <a href="#glossary">the glossary</a>.</p>
+    <div class="thread-demo">
+      <p class="cap">The golden thread you'll follow through every step:</p>
+      <ol class="chain" aria-label="From context to audit">
+        <li>Context</li><li class="arrow" aria-hidden="true">›</li>
+        <li>Scope</li><li class="arrow" aria-hidden="true">›</li>
+        <li>Risk</li><li class="arrow" aria-hidden="true">›</li>
+        <li>Treatment</li><li class="arrow" aria-hidden="true">›</li>
+        <li>Controls</li><li class="arrow" aria-hidden="true">›</li>
+        <li>SoA</li><li class="arrow" aria-hidden="true">›</li>
+        <li>Evidence</li><li class="arrow" aria-hidden="true">›</li>
+        <li>Audit</li>
+      </ol>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="basics" class="basics">
+  <div class="wrap">
+    <h2 class="section-title">Start here: the basics</h2>
+    <p>If you've never worked in security or compliance, read this first. Everything else in the guide builds on these six ideas.</p>
+    <dl>
+      <dt>What is ISO 27001?</dt>
+      <dd>It's an international standard that describes how a company should manage information security. It isn't a list of technical settings. It's a way of working: understand your risks, decide what to do about them, do it, and keep checking it works.</dd>
+      <dt>Why do companies want it?</dt>
+      <dd>Mostly because their customers ask for it. A certificate shows an independent auditor has checked that the company manages security properly. For a software company, it often decides whether a big customer signs the contract.</dd>
+      <dt>What is an ISMS?</dt>
+      <dd>ISMS stands for "information security management system." That sounds technical, but it just means the people, rules, processes and records a company uses to manage security. It isn't software you buy. ISO 27001 tells you what a good ISMS needs.</dd>
+      <dt>What is a risk?</dt>
+      <dd>Something that could go wrong and hurt the company or its customers. For example: "An ex-employee could still log in and see customer data."</dd>
+      <dt>What is a control?</dt>
+      <dd>Something you put in place to stop a risk happening, or to reduce the damage if it does. For example: "Remove people's access on their last day." Annex A is the section of ISO 27001 that lists 93 example controls.</dd>
+      <dt>What is the Statement of Applicability (SoA)?</dt>
+      <dd>A document that goes through all 93 Annex A controls and says, for each one, "Do we use this? Why or why not?" Auditors read it closely.</dd>
+    </dl>
+    <div class="analogy">
+      <h3 style="font-size:1.2rem">A simple way to picture it: securing a family home</h3>
+      <p style="margin-top:.5rem">Imagine someone asks you to make their home safer. You wouldn't turn up and fit 93 different locks. You'd do this:</p>
+      <ol>
+        <li>Get to know the household: who lives there, what matters to them, what worries them.</li>
+        <li>Agree which parts you're covering, say the house and garage but not the allotment.</li>
+        <li>Ask what could go wrong: a break-in, a fire, a lost spare key.</li>
+        <li>Decide what to do about each one: fix it, avoid it, insure it or live with it.</li>
+        <li>Choose the safety measures that match those decisions.</li>
+        <li>Check a catalogue of common measures to make sure you haven't forgotten anything obvious.</li>
+        <li>Write down what you chose and why.</li>
+      </ol>
+      <p style="margin-top:.75rem;margin-bottom:0">That's ISO 27001. The catalogue in step 6 is Annex A, and the written record in step 7 is the Statement of Applicability. You look at the catalogue near the end, not the beginning.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="section-title">Why I wrote this</h2>
+    <p>I've implemented ISO 27001 and audited companies against it. I've sat on both sides of the table: building the ISMS, and being the person asking to see the evidence.</p>
+    <p>From both sides, I see the same thing again and again. People learn the controls, but they can't explain where those controls came from. So this guide shows you the work the way it actually happens.</p>
+    <div class="diff">
+      <div><h3>What I see go wrong most</h3><p>Starting with the 93 controls, copying templates, and scrambling for evidence the week before the audit. Each step warns you about these in a red box.</p></div>
+      <div><h3>What I ask as an auditor</h3><p>The teal box at the end of each step shows the kind of question I'd ask, so you know what to prepare.</p></div>
+      <div><h3>One company, start to finish</h3><p>Every step uses the same pretend company, Ledgerly, so you can watch the decisions build on each other.</p></div>
+      <div><h3>One problem, followed all the way</h3><p>The gold boxes follow one real-world problem, ex-staff still being able to log in, from the first conversation until it's fixed and checked.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="casefile">
+      <h2>Meet your client: Ledgerly</h2>
+      <p>You've just been hired as their first GRC lead. GRC stands for governance, risk and compliance: the person who helps a company manage risk and prove it follows the rules. Their biggest enterprise prospect has said, "We can't sign without ISO 27001." You have roughly six to nine months.</p>
+      <dl class="facts">
+        <dt>What they do</dt><dd>B2B expense and payroll software for mid-sized UK companies</dd>
+        <dt>People</dt><dd>70 staff, mostly remote, a small office in London, plus 6 contractors</dd>
+        <dt>Tech</dt><dd>AWS (where their app runs), GitHub (where their code lives), Okta (staff logins), HiBob (HR system), plus Slack and Google Workspace. Don't worry if these names are new. They're explained in the glossary.</dd>
+        <dt>Data</dt><dd>Employee names, bank details and salary data belonging to their customers' staff</dd>
+        <dt>Security today</dt><dd>Some good habits, very little written down, offboarding done by a Slack message</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="section-title">The ten steps</h2>
+    <p style="margin-bottom:2rem">Tick each step off as you work through it. Your progress stays saved in this browser.</p>
+
+    <ol class="steps">
+
+      <li class="step" data-step="1">
+        <span class="num" aria-hidden="true">1</span>
+        <h3>Understand the organisation</h3>
+        <p class="plain">Get to know the company before you try to protect it.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clauses 4.1 and 4.2: context, and interested parties and their requirements</p>
+        <p>Before you touch a single control, find out what the business is trying to achieve and what could get in the way. This is interviews and reading, not templates.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Hold 45-minute conversations with the CEO, CTO, Head of People, Head of Customer Success and whoever answers security questionnaires.</li>
+          <li>Read the last five security questionnaires customers sent. They tell you exactly what the market expects.</li>
+          <li>Write down what's happening inside the company (culture, skills, tools, growth) and outside it (laws, competitors, cyber threats, suppliers). A 2024 update to the standard also asks you to consider whether climate change affects the company. It's fine to write "low relevance, reviewed every year."</li>
+          <li>List the "interested parties," meaning anyone who cares about the company's security, such as customers, regulators, staff and suppliers. Note what each one needs.</li>
+        </ul>
+        <div class="box example">
+          <strong>Ledgerly example: interested parties</strong>
+          <div class="tablewrap"><table>
+            <tr><th>Interested party</th><th>Their requirement</th><th>Addressed in the ISMS?</th></tr>
+            <tr><td>Enterprise customers</td><td>ISO 27001 certificate, 24-hour breach notice, data kept in the UK</td><td>Yes</td></tr>
+            <tr><td>ICO (the UK data protection regulator)</td><td>Personal data kept secure, and serious breaches reported within 72 hours, as UK GDPR requires</td><td>Yes</td></tr>
+            <tr><td>Investors</td><td>No major incident that damages growth or valuation</td><td>Yes, through risk appetite</td></tr>
+            <tr><td>Employees</td><td>Clear rules, tools that don't block their work</td><td>Yes, through policy and awareness</td></tr>
+            <tr><td>AWS</td><td>Ledgerly secures its own settings and data. AWS secures the buildings and hardware.</td><td>Yes</td></tr>
+          </table></div>
+        </div>
+        <div class="box thread">
+          <strong>The golden thread starts here</strong>
+          <p>In your interview with the Head of People, she mentions: "When someone leaves, I post in the #it channel and engineering removes their access." That's your first clue. Write it down.</p>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Downloading a "context of the organisation" template and filling it with generic phrases like "cyber threats are increasing." An auditor can spot a copy-paste context in seconds. Use the company's real words.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"How did you identify these interested parties, and where do their requirements show up in your risk assessment?"</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="2">
+        <span class="num" aria-hidden="true">2</span>
+        <h3>Define the scope</h3>
+        <p class="plain">Decide which parts of the company the certificate will cover.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 4.3</p>
+        <p>Scope decides what the certificate covers. Too wide and you drown. Too narrow and the certificate is useless to the customers who asked for it.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Start from what customers are buying: the product they need assurance on.</li>
+          <li>Map the people, locations, systems, suppliers and processes that support that product.</li>
+          <li>Note where your scope connects to things outside it, such as AWS or a payroll provider. The standard calls these "interfaces."</li>
+          <li>Write a scope statement that someone outside the company can understand, then get leadership to sign it off.</li>
+        </ul>
+        <div class="box example">
+          <strong>Ledgerly example: scope statement</strong>
+          <p class="quote">"The information security management system supporting the development, operation and support of the Ledgerly expense and payroll platform, delivered from AWS (London region), including the London office and remote staff, in accordance with Statement of Applicability version 1.0."</p>
+          <p>Out of scope: the internal marketing website, which holds no customer data and runs on a separate hosting account. The interface is documented, because marketing still uses Okta.</p>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Leaving remote workers or contractors out of scope because it's "easier." If they touch customer data, they're part of the story, and the auditor will ask.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"Your customer contract mentions the mobile app. Why isn't it in scope?"</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="3">
+        <span class="num" aria-hidden="true">3</span>
+        <h3>Get leadership to own it</h3>
+        <p class="plain">Make sure the bosses are involved and responsible, not just you.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 5: leadership, policy, roles</p>
+        <p>An ISMS that only the GRC lead cares about will fail its first management review. Leadership needs to set direction, give you resources and make decisions about risk.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Write a short information security policy (one to two pages). It should set direction and commit to meeting requirements and continual improvement, not list every rule.</li>
+          <li>Agree who is responsible for what. Name one senior leader to own the whole programme, plus an owner for each risk and each control. A simple table works well. Many teams use a RACI, which shows who is Responsible, Accountable, Consulted and Informed.</li>
+          <li>Set up a security steering group that meets monthly, with an agenda and minutes. Those minutes become evidence later.</li>
+        </ul>
+        <div class="box example">
+          <strong>Ledgerly example</strong>
+          <p>The CTO becomes ISMS owner. The CEO signs the policy. A 30-minute steering group runs on the first Tuesday of every month with the CTO, Head of People, Head of Customer Success and you.</p>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Making yourself the owner of every risk and control. You facilitate. The business owns.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"Can I speak to your top management about how they support the ISMS?" Yes, they will want to interview them. Prepare your executives.</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="4">
+        <span class="num" aria-hidden="true">4</span>
+        <h3>Assess the risks</h3>
+        <p class="plain">List what could go wrong, and how likely and how bad each problem would be.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 6.1.2</p>
+        <p>This is the engine of the whole standard. Everything that follows comes from here.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Pick a simple, repeatable way to score risks. A common one is to rate likelihood (how likely it is) from 1 to 5 and impact (how bad it would be) from 1 to 5, then multiply them for a score out of 25. The standard cares that results are consistent and comparable, not that your method is sophisticated.</li>
+          <li>Agree with leadership which scores are acceptable. For example: 8 or below is low enough to live with, and anything above 15 must be dealt with.</li>
+          <li>Run risk workshops with engineering, people, support and finance. Ask, "What would hurt the confidentiality, integrity or availability of customer data here?"</li>
+          <li>Give every risk an owner. A risk without an owner isn't managed.</li>
+        </ul>
+        <div class="box thread">
+          <strong>The golden thread: the risk is born</strong>
+          <p>You follow up on that Slack message from step 1. In GitHub you find two people who left four months ago and still have access. One contractor still has an active AWS console login.</p>
+          <div class="tablewrap"><table>
+            <tr><th>ID</th><th>Risk</th><th>Owner</th><th>Likelihood</th><th>Impact</th><th>Score</th></tr>
+            <tr><td>R-07</td><td>Leavers and contractors keep access to production systems because offboarding is manual and depends on a Slack message, leading to unauthorised access to customer payroll data.</td><td>CTO</td><td>4</td><td>5</td><td><strong>20</strong></td></tr>
+          </table></div>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Writing risks as one-word topics like "Access control" or "Malware." A good risk statement names the cause, the event and the consequence.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"If I ran your method again on the same risk, would I get the same score?"</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="5">
+        <span class="num" aria-hidden="true">5</span>
+        <h3>Decide how to treat each risk</h3>
+        <p class="plain">For each problem, decide what you're going to do about it.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 6.1.3: risk treatment and the treatment plan</p>
+        <p>For every risk above your acceptance level, the owner chooses one of four options: mitigate it, avoid it, transfer or share it, or accept it. Then you choose the controls that make that decision real.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Walk each risk owner through their risks and record their decision, not yours.</li>
+          <li>For mitigation, choose controls from anywhere: your own ideas, NIST, CIS, customer requirements. Annex A comes in the next step.</li>
+          <li>Build a risk treatment plan with actions, owners, target dates and the expected residual score.</li>
+          <li>Get each risk owner to approve the plan and accept whatever risk is left afterwards. An email from them is enough proof.</li>
+        </ul>
+        <div class="box thread">
+          <strong>The golden thread: the decision</strong>
+          <p>The CTO decides to mitigate R-07. The treatment plan says:</p>
+          <ul>
+            <li>Connect the HR system (HiBob) to the login system (Okta), so that when HR marks someone as leaving, their login is switched off automatically. Owner: IT lead. Due in 6 weeks.</li>
+            <li>Make everyone log in to GitHub and AWS through Okta. This is called single sign-on. It means switching off one Okta login removes access everywhere at once. Owner: Head of Platform. Due in 8 weeks.</li>
+            <li>Every three months, check who has powerful "admin" access and remove anyone who shouldn't have it. Owner: CTO. Starts next quarter.</li>
+          </ul>
+          <p>Once the fixes are in place, the risk is much less likely: likelihood 1, impact 5, score 5. The risk left over after your fixes is called "residual risk." The CTO confirms in writing that a score of 5 is acceptable.</p>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Choosing "accept" for anything difficult without a real conversation, or accepting a risk that is well above the agreed criteria with no justification from leadership.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"Show me where the risk owner approved this treatment plan and accepted the residual risk."</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="6">
+        <span class="num" aria-hidden="true">6</span>
+        <h3>Check against Annex A and write the SoA</h3>
+        <p class="plain">Use ISO's list of 93 security measures to check you haven't missed anything, then write down what you picked and why.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 6.1.3 (c) and (d): the Statement of Applicability</p>
+        <p>Now, and only now, you open Annex A. Its 93 controls are grouped into four themes: organisational (37), people (8), physical (14) and technological (34). Use them as a checklist to make sure you haven't missed anything your risks need.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Find each control you chose in step 5 in the Annex A list and note its number.</li>
+          <li>Go through all 93 and ask, "Do any of our risks or requirements need this?" If you find a gap, go back and update the risk assessment.</li>
+          <li>For each control, record whether it's applicable, why, and whether it's implemented yet.</li>
+          <li>Justify every exclusion in one clear sentence.</li>
+        </ul>
+        <div class="box thread">
+          <strong>The golden thread: the SoA lines</strong>
+          <div class="tablewrap"><table>
+            <tr><th>Control</th><th>Applicable?</th><th>Justification</th><th>Status</th></tr>
+            <tr><td>5.16 Identity management</td><td>Yes</td><td>R-07; customer contract clause 9.2</td><td>In progress</td></tr>
+            <tr><td>5.18 Access rights</td><td>Yes</td><td>R-07; quarterly access review</td><td>In progress</td></tr>
+            <tr><td>6.5 Responsibilities after termination</td><td>Yes</td><td>R-07; leaver process with HR</td><td>In progress</td></tr>
+            <tr><td>8.2 Privileged access rights</td><td>Yes</td><td>R-07; AWS and GitHub admin roles</td><td>In progress</td></tr>
+          </table></div>
+        </div>
+        <div class="box example">
+          <strong>Ledgerly example: two tricky calls</strong>
+          <p><strong>Physical security controls (numbered 7.1 to 7.14).</strong> A beginner might say, "We don't own a data centre, so these don't apply." They still do. Ledgerly has a London office to protect. For the data centre, Ledgerly shows it checks AWS's security reports, using the supplier controls in Annex A.</p>
+          <p><strong>8.30 Outsourced development.</strong> This one is excluded, with a one-line reason: "Ledgerly doesn't pay outside companies to write its software. All code is written and reviewed by its own staff. Reviewed yearly."</p>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Starting the whole project here, marking all 93 controls "applicable" and then writing a policy for each one. That's the approach the reel warns about. The SoA should explain decisions you've already made.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"Pick any control. Which risk led you to include it?" If you can't answer, the thread is broken.</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="7">
+        <span class="num" aria-hidden="true">7</span>
+        <h3>Set objectives and give people what they need</h3>
+        <p class="plain">Set goals you can measure, and make sure staff know what's expected of them.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 6.2 and Clause 7: objectives, resources, competence, awareness, communication, documented information</p>
+        <p>Objectives turn "we take security seriously" into something you can measure. Clause 7 makes sure people have the skills, awareness and documents to deliver it.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Set a small number of measurable objectives, three to six, each linked to a risk or requirement.</li>
+          <li>Write down which skills key roles need, and keep proof that people have them, such as certificates, training records or CVs.</li>
+          <li>Run awareness training that talks about Ledgerly's actual risks, not generic phishing slides.</li>
+          <li>Keep your documents organised. Each one needs an owner, a version number, a review date and one place where the latest copy lives.</li>
+        </ul>
+        <div class="box thread">
+          <strong>The golden thread: the objective</strong>
+          <p>"100% of leavers have all access removed within 24 hours of their last working day, measured monthly and reported to the steering group."</p>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Objectives that can't fail, like "Improve security awareness." If you can't tell whether you hit it, it isn't an objective.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"Pick an engineer. Can they tell me what the security policy expects of them?" Auditors often interview staff at random.</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="8">
+        <span class="num" aria-hidden="true">8</span>
+        <h3>Run it and keep the evidence</h3>
+        <p class="plain">Do what you planned, and keep proof that you did it.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 8: operational planning, risk assessments and treatment in practice</p>
+        <p>This is where the plan becomes reality. Controls need to operate, and you need proof that they operated.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Deliver the treatment plan and track it at the steering group.</li>
+          <li>Decide for each control what evidence it produces, where it lives and who collects it. Automate where you can.</li>
+          <li>Repeat the risk assessment on a regular schedule, and whenever something big changes, such as a new product or a new supplier.</li>
+        </ul>
+        <div class="box thread">
+          <strong>The golden thread: the evidence</strong>
+          <ul>
+            <li>System records showing each leaver's login was switched off on their last day.</li>
+            <li>Dated screenshots showing that GitHub and AWS can only be accessed through Okta.</li>
+            <li>The first three-monthly access check: the list of people checked, who checked it, what was removed and the CTO's approval.</li>
+            <li>The monthly leaver metric in the steering group minutes.</li>
+          </ul>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Collecting evidence the week before the audit. Auditors look for controls operating over time. A screenshot taken yesterday proves very little.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"Give me the list of everyone who left in the last three months. I'll pick three, and you show me when each person's access was removed."</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="9">
+        <span class="num" aria-hidden="true">9</span>
+        <h3>Check that it works</h3>
+        <p class="plain">Check your own work before the official auditor does.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 9: monitoring and measurement, internal audit, management review</p>
+        <p>Before a certification body audits you, you audit yourself. Then leadership reviews the results and makes decisions.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>Measure your objectives and report them.</li>
+          <li>Run an internal audit, which is a practice audit done by your own side. It should check every part of your ISMS. The person doing it must be independent, so you can't audit your own work. Ask a colleague from another team or hire a consultant.</li>
+          <li>Hold a management review, which is a meeting where leadership looks at how the ISMS is going and makes decisions. The standard lists what they should cover, including audit results, goals, risks and ideas for improvement. Write down what they decide.</li>
+        </ul>
+        <div class="box thread">
+          <strong>The golden thread: a finding</strong>
+          <p>The internal auditor samples ten leavers. Nine were removed within 24 hours. One contractor wasn't, because contractors aren't set up in HiBob, so the automation never triggered. This is recorded as a "nonconformity," which simply means something isn't working the way it should.</p>
+          <p>This is a good result. It shows your ISMS is finding real problems.</p>
+        </div>
+        <div class="box mistake">
+          <strong>Beginner mistake</strong>
+          <p>Treating the internal audit as a formality and hoping for zero findings. A clean internal audit on a brand-new ISMS makes experienced auditors suspicious.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"Show me your internal audit programme, the report, and the management review minutes where the results were discussed."</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+      <li class="step" data-step="10">
+        <span class="num" aria-hidden="true">10</span>
+        <h3>Fix the root cause and keep improving</h3>
+        <p class="plain">When something goes wrong, fix the cause so it doesn't happen again.</p>
+        <p class="clause">Where this sits in the standard (you don't need to memorise it): Clause 10: continual improvement, nonconformity and corrective action</p>
+        <p>When something goes wrong, you don't just fix the instance. You find out why it happened and stop it happening again.</p>
+        <h4>What you actually do</h4>
+        <ul>
+          <li>For each problem, write down what happened, the quick fix, the root cause (the real reason it happened), the longer-term fix and who owns it.</li>
+          <li>Check later that the corrective action actually worked.</li>
+          <li>Feed what you learn back into the risk assessment. The cycle starts again.</li>
+        </ul>
+        <div class="box thread">
+          <strong>The golden thread closes</strong>
+          <ul>
+            <li>Immediate fix: the contractor's access is removed the same day.</li>
+            <li>Root cause: contractors are managed outside the HR system.</li>
+            <li>Corrective action: all contractors are added to HiBob with an end date, so the same automation covers them. Owner: Head of People.</li>
+            <li>Effectiveness check: next quarter's sample of contractor leavers shows 100% removed on time.</li>
+            <li>R-07 is updated with the new residual score and reviewed at the next steering group.</li>
+          </ul>
+          <p>One risk, traced from an interview comment to a closed corrective action. That's what "understanding how the pieces connect" means.</p>
+        </div>
+        <div class="box auditor">
+          <strong>What the auditor may ask</strong>
+          <p class="quote">"How do you know this corrective action was effective?"</p>
+        </div>
+        <label class="done"><input type="checkbox"> I've done this step</label>
+      </li>
+
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="section-title">A realistic timeline</h2>
+    <p>Timelines vary with company size and maturity. For a company like Ledgerly, this is a sensible shape. Certification then happens in two stages. In Stage 1, an external auditor checks your documents and whether you're ready. In Stage 2, they come back and test whether everything really works in practice. Most certification bodies want to see a full internal audit and management review completed before Stage 2.</p>
+    <div class="plan">
+      <div><h3>Months 1 to 2</h3><ul><li>Interviews and context</li><li>Scope signed off</li><li>Policy and roles agreed</li><li>Risk method approved</li></ul></div>
+      <div><h3>Months 2 to 4</h3><ul><li>Risk workshops</li><li>Treatment plan approved</li><li>SoA version 1.0</li><li>Objectives set</li></ul></div>
+      <div><h3>Months 4 to 7</h3><ul><li>Controls implemented</li><li>Evidence building up</li><li>Awareness training delivered</li><li>Monthly steering group</li></ul></div>
+      <div><h3>Months 7 to 9</h3><ul><li>Internal audit</li><li>Management review</li><li>Corrective actions</li><li>Stage 1, then Stage 2</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="section-title">The documents the auditor will expect</h2>
+    <p>ISO 27001 requires certain documented information. You don't need a separate document for each item, and a well-run register or tool often works better than a pile of Word files.</p>
+    <ul class="checklist">
+      <li>ISMS scope</li>
+      <li>Information security policy</li>
+      <li>Risk assessment process</li>
+      <li>Risk treatment process</li>
+      <li>Statement of Applicability</li>
+      <li>Risk treatment plan</li>
+      <li>Information security objectives</li>
+      <li>Evidence of competence</li>
+      <li>Risk assessment results</li>
+      <li>Risk treatment results</li>
+      <li>Monitoring and measurement results</li>
+      <li>Internal audit programme and results</li>
+      <li>Management review results</li>
+      <li>Nonconformities and corrective actions</li>
+      <li>Operational procedures your controls need</li>
+    </ul>
+  </div>
+</section>
+
+<section id="glossary">
+  <div class="wrap">
+    <h2 class="section-title">Glossary: words you'll see</h2>
+    <dl class="glossary">
+      <dt>Access</dt><dd>Being able to log in to a system and see or change things.</dd>
+      <dt>Admin access</dt><dd>Powerful access that can change settings or see everything. The standard calls it "privileged access."</dd>
+      <dt>Annex A</dt><dd>The part of ISO 27001 that lists 93 example security controls.</dd>
+      <dt>Auditor</dt><dd>An independent person who checks whether the company meets the standard. The certification auditor comes from an accredited certification body.</dd>
+      <dt>AWS</dt><dd>Amazon Web Services, a cloud provider. Ledgerly's app runs on Amazon's computers.</dd>
+      <dt>Clause</dt><dd>A numbered section of the standard. Clauses 4 to 10 contain the requirements.</dd>
+      <dt>Control</dt><dd>A measure that reduces a risk, such as a process, a rule or a technical setting.</dd>
+      <dt>Evidence</dt><dd>Proof that a control is working, such as records, screenshots, signed approvals or meeting notes.</dd>
+      <dt>GitHub</dt><dd>A service where software teams store and manage their code.</dd>
+      <dt>GRC</dt><dd>Governance, risk and compliance.</dd>
+      <dt>HiBob</dt><dd>An HR system that keeps records of who joins and leaves.</dd>
+      <dt>Interested parties</dt><dd>Anyone who cares about the company's security, such as customers, regulators, staff and suppliers.</dd>
+      <dt>ISMS</dt><dd>Information security management system: the people, rules, processes and records used to manage security.</dd>
+      <dt>Management review</dt><dd>A regular meeting where leadership reviews how the ISMS is going and makes decisions.</dd>
+      <dt>Nonconformity</dt><dd>Something that doesn't meet the standard or the company's own rules.</dd>
+      <dt>Okta</dt><dd>A login system. Staff sign in once and get into the tools they need.</dd>
+      <dt>Production</dt><dd>The live system that real customers use, as opposed to test versions.</dd>
+      <dt>Residual risk</dt><dd>The risk that's left over after your fixes are in place.</dd>
+      <dt>Risk owner</dt><dd>The person responsible for deciding what to do about a risk. Usually a senior manager, not the GRC team.</dd>
+      <dt>Root cause</dt><dd>The real underlying reason something went wrong.</dd>
+      <dt>Scope</dt><dd>The parts of the company that the ISMS and the certificate cover.</dd>
+      <dt>Single sign-on (SSO)</dt><dd>Logging in once to reach many tools, so switching off one login removes access everywhere.</dd>
+      <dt>SoA</dt><dd>Statement of Applicability: the document explaining which Annex A controls you use and why.</dd>
+      <dt>Stage 1 and Stage 2</dt><dd>The two parts of a certification audit. Stage 1 checks you're ready. Stage 2 checks it all works.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="section-title">Try it yourself</h2>
+    <p>Pick a company you know, perhaps a past employer or an app you use every day. Work through steps 1 to 6 for it, and trace one risk of your own from context to SoA line. If you can explain that thread in an interview, you'll stand out from people who only memorised the controls.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Funke Omolere</strong> is a GRC lead who runs regulatory certifications across EMEA and mentors career changers into cybersecurity through CyberShiftWithFunke.</p>
+    <p>Based on ISO/IEC 27001:2022 including Amendment 1:2024. Ledgerly is fictional. This guide is educational and doesn't replace the standard itself, which you can buy from ISO or BSI.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var KEY='iso27001-guide-progress';
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  var boxes=steps.map(function(s){return s.querySelector('.done input');});
+  var bar=document.getElementById('bar'), fill=bar.querySelector('span'), count=document.getElementById('count');
+  function load(){try{var v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[];}catch(e){return [];}}
+  function save(v){try{localStorage.setItem(KEY,JSON.stringify(v));}catch(e){}}
+  function render(){
+    var done=0;
+    boxes.forEach(function(b,i){steps[i].classList.toggle('is-done',b.checked);if(b.checked)done++;});
+    fill.style.width=(done/boxes.length*100)+'%';
+    bar.setAttribute('aria-valuenow',done);
+    count.textContent=done+' of '+boxes.length+' steps done';
+  }
+  var saved=load();
+  boxes.forEach(function(b,i){
+    b.checked=saved.indexOf(i)>-1;
+    b.addEventListener('change',function(){
+      save(boxes.map(function(x,j){return x.checked?j:-1;}).filter(function(j){return j>-1;}));
+      render();
+    });
+  });
+  document.getElementById('reset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false;});save([]);render();});
+  render();
+})();
+</script>
+</body>
+</html>
