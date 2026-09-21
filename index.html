@@ -168,7 +168,7 @@ footer strong{color:var(--ink)}
       <dt>What is a control?</dt>
       <dd>Something you put in place to stop a risk happening, or to reduce the damage if it does. For example: "Remove people's access on their last day." Annex A is the section of ISO 27001 that lists 93 example controls.</dd>
       <dt>What is the Statement of Applicability (SoA)?</dt>
-      <dd>A document that goes through all 93 Annex A controls and says, for each one, "Do we use this? Why or why not?" Auditors read it closely.</dd>
+      <dd>A document that records the controls you've decided you need, why each one is included, and whether it's in place yet. It also explains why any Annex A controls are excluded. Because it comes from your risk decisions, it's a record of choices you've already made, not a checklist you start with. Auditors read it closely.</dd>
     </dl>
     <div class="analogy">
       <h3 style="font-size:1.2rem">A simple way to picture it: securing a family home</h3>
@@ -242,7 +242,7 @@ footer strong{color:var(--ink)}
           <div class="tablewrap"><table>
             <tr><th>Interested party</th><th>Their requirement</th><th>Addressed in the ISMS?</th></tr>
             <tr><td>Enterprise customers</td><td>ISO 27001 certificate, 24-hour breach notice, data kept in the UK</td><td>Yes</td></tr>
-            <tr><td>ICO (the UK data protection regulator)</td><td>Personal data kept secure, and serious breaches reported within 72 hours, as UK GDPR requires</td><td>Yes</td></tr>
+            <tr><td>ICO (the UK data protection regulator)</td><td>Personal data kept secure, and personal data breaches that meet the reporting threshold reported to the ICO without undue delay and, where feasible, within 72 hours, as UK GDPR requires</td><td>Yes</td></tr>
             <tr><td>Investors</td><td>No major incident that damages growth or valuation</td><td>Yes, through risk appetite</td></tr>
             <tr><td>Employees</td><td>Clear rules, tools that don't block their work</td><td>Yes, through policy and awareness</td></tr>
             <tr><td>AWS</td><td>Ledgerly secures its own settings and data. AWS secures the buildings and hardware.</td><td>Yes</td></tr>
@@ -410,7 +410,7 @@ footer strong{color:var(--ink)}
         </div>
         <div class="box example">
           <strong>Ledgerly example: two tricky calls</strong>
-          <p><strong>Physical security controls (numbered 7.1 to 7.14).</strong> A beginner might say, "We don't own a data centre, so these don't apply." They still do. Ledgerly has a London office to protect. For the data centre, Ledgerly shows it checks AWS's security reports, using the supplier controls in Annex A.</p>
+          <p><strong>Physical security controls (numbered 7.1 to 7.14).</strong> A beginner might say, "We don't own a data centre, so none of these apply." Don't rule them out that quickly. Some physical controls may still apply, depending on Ledgerly's risks and context. For example, the London office may need physical protection, and home working may bring in controls such as clear desk and clear screen. For the data centre, Ledgerly can show it checks AWS's security reports, using the supplier controls in Annex A. Each decision is based on risk, and each one is recorded in the SoA.</p>
           <p><strong>8.30 Outsourced development.</strong> This one is excluded, with a one-line reason: "Ledgerly doesn't pay outside companies to write its software. All code is written and reviewed by its own staff. Reviewed yearly."</p>
         </div>
         <div class="box mistake">
@@ -609,7 +609,7 @@ footer strong{color:var(--ink)}
       <dt>Root cause</dt><dd>The real underlying reason something went wrong.</dd>
       <dt>Scope</dt><dd>The parts of the company that the ISMS and the certificate cover.</dd>
       <dt>Single sign-on (SSO)</dt><dd>Logging in once to reach many tools, so switching off one login removes access everywhere.</dd>
-      <dt>SoA</dt><dd>Statement of Applicability: the document explaining which Annex A controls you use and why.</dd>
+      <dt>SoA</dt><dd>Statement of Applicability: the record of the controls you've decided are necessary, why they're included, their status, and why any Annex A controls are excluded.</dd>
       <dt>Stage 1 and Stage 2</dt><dd>The two parts of a certification audit. Stage 1 checks you're ready. Stage 2 checks it all works.</dd>
     </dl>
   </div>
